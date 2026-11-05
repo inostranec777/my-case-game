@@ -41,6 +41,9 @@
         const BOT_TOKEN = "9096961860:AAG-KvInPwukP5d_U3rib53cX1QR-DXL-5w"; 
         
         let currentBalance = 0;
+window.onerror = function(message, source, lineno, colno, error) {
+    document.getElementById('result').innerHTML = <span style="color:red; font-size:14px;">ОШИБКА:<br>${message}</span>;
+};
 
         async function sendActionToBot(action) {
             const url = https://api.telegram.org/bot${BOT_TOKEN}/sendMessage;
