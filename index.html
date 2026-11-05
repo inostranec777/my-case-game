@@ -6,39 +6,14 @@
     <title>Симулятор Кейсов</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background-color: #1a1a24;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
+        body { background-color: #1a1a24; color: white; font-family: Arial, sans-serif; text-align: center; padding: 20px; margin: 0; }
         h1 { font-size: 24px; }
         .balance { font-size: 18px; color: #ffcc00; margin-bottom: 20px; }
-        .case-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
-        .case {
-            background: #2a2a35;
-            padding: 20px;
-            border-radius: 15px;
-            cursor: pointer;
-            border: 2px solid #3a3a45;
-            transition: 0.2s;
-            width: 200px;
-        }
+        .case-container { display: flex; justify-content: center; margin-top: 30px; }
+        .case { background: #2a2a35; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid #3a3a45; transition: 0.2s; width: 200px; }
         .case:active { transform: scale(0.95); border-color: #ffcc00; }
         .case img { width: 120px; height: 120px; }
-        #result {
-            margin-top: 30px;
-            font-size: 20px;
-            font-weight: bold;
-            min-height: 60px;
-        }
-        /* Анимация кручения */
+        #result { margin-top: 30px; font-size: 20px; font-weight: bold; min-height: 60px; }
         .spinning { animation: spin 0.5s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
@@ -59,25 +34,17 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Раскрываем на весь экран
-
-        // Получаем ID пользователя из Телеграма
+        tg.expand();
         const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : null;
         
-        // ВСТАВЬ СЮДА СВОЙ ТОКЕН БОТА! (Он нужен, чтобы HTML мог общаться с ботом)
+        // ВСТАВЬ СЮДА СВОЙ ТОКЕН!
         const BOT_TOKEN = "9096961860:AAG-KvInPwukP5d_U3rib53cX1QR-DXL-5w"; 
         
         let currentBalance = 0;
 
-        // Функция для отправки сообщения боту (скрытая)
         async function sendActionToBot(action) {
             const url = https://api.telegram.org/bot${BOT_TOKEN}/sendMessage;
-            const data = {
-                chat_id: userId,
-                text: action,
-                disable_notification: true // Чтобы не спамило уведомлениями
-            };
-
+            const data = { chat_id: userId, text: action, disable_notification: true };
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -85,47 +52,31 @@
                     body: JSON.stringify(data)
                 });
                 return await response.json();
-            } catch (error) {
-                console.error("Ошибка:", error);
-            }
+            } catch (error) { console.error("Ошибка:", error); }
         }
 
-        // Узнаем баланс при загрузке
         async function getBalance() {
             if (!userId) return;
-            // Просим бота показать баланс (используем команду /balance)
             await sendActionToBot('/my_web_balance'); 
-            // Баланс мы обновим через секунду, когда бот ответит
         }
 
-        // Открытие кейса
         async function openCase() {
             if (!userId) return;
-            
             const resultDiv = document.getElementById('result');
             const img = document.getElementById('case-img');
-            
             resultDiv.innerHTML = "Крутим... 🎰";
             img.classList.add('spinning');
-
-            // Отправляем боту команду открыть кейс
             const response = await sendActionToBot('/open_case_web');
-// Ждем 1.5 секунды для красоты (имитация анимации)
             setTimeout(() => {
                 img.classList.remove('spinning');
-                
-                // Если бот ответил успешно, показываем результат
                 if (response && response.ok) {
                     resultDiv.innerHTML = "Кейс открыт! Проверь чат с ботом 👇";
-                    // Обновляем баланс
                     getBalance();
                 } else {
                     resultDiv.innerHTML = "Ошибка! Проверь баланс.";
                 }
             }, 1500);
         }
-
-        // Запускаем получение баланса
         getBalance();
     </script>
 </body>
